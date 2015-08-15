@@ -1,0 +1,12 @@
+C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\ForwardMongoLogger.dll.config
+C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\ForwardMongoLogger.dll
+C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\ForwardMongoLogger.pdb
+C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\obj\Debug\ForwardMongoLogger.dll
+C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\obj\Debug\ForwardMongoLogger.pdb
+C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\log4net.dll
+C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\MongoDB.Bson.dll
+C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\MongoDB.Driver.Core.dll
+C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\MongoDB.Driver.dll
+C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\log4net.xml
+C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\MongoDB.Bson.xml
+C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\MongoDB.Driver.xml
