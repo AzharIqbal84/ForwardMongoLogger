@@ -10,3 +10,16 @@ C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\
 C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\log4net.xml
 C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\MongoDB.Bson.xml
 C:\Users\azhariqbal\Desktop\4ward\Lab\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\MongoDB.Driver.xml
+C:\work\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\ForwardMongoLogger.dll.config
+C:\work\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\ForwardMongoLogger.dll
+C:\work\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\ForwardMongoLogger.pdb
+C:\work\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\log4net.dll
+C:\work\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\MongoDB.Bson.dll
+C:\work\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\MongoDB.Driver.Core.dll
+C:\work\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\MongoDB.Driver.dll
+C:\work\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\log4net.xml
+C:\work\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\MongoDB.Bson.xml
+C:\work\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\MongoDB.Driver.xml
+C:\work\ForwardMongoLogger\ForwardMongoLogger\obj\Debug\ForwardMongoLogger.dll
+C:\work\ForwardMongoLogger\ForwardMongoLogger\obj\Debug\ForwardMongoLogger.pdb
+C:\work\ForwardMongoLogger\ForwardMongoLogger\obj\Debug\ForwardMongoLogger.csprojResolveAssemblyReference.cache

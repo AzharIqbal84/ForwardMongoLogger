@@ -21,7 +21,7 @@ namespace ForwardMongoLogger
             }
 
             var client = new MongoClient(mongoConnectionString.ToString());
-            var db = client.GetDatabase(appender.DatabaseName ?? "log4net_mongodb");
+            var db = client.GetDatabase(appender.DatabaseName ?? "MongoLog");
             return db;
         }
 

@@ -112,7 +112,7 @@ namespace ForwardMongoLogger
             MongoUrl url = MongoUrl.Create(connStr);
 
             var client = new MongoClient(url);
-            var db = client.GetDatabase(url.DatabaseName ?? "log4net");
+            var db = client.GetDatabase(url.DatabaseName ?? "MongoLog");
             return db;
         }
 
