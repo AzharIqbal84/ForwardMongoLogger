@@ -12,9 +12,12 @@ namespace Test
         public void Log_Info_Message()
         {
             XmlConfigurator.Configure();
-            ILog log = LogManager.GetLogger(typeof(ForwardMongoLogger));
+            log4net.ILog log = log4net.LogManager.GetLogger
+        (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-            log.Info("some info ");
+            log.Info("some infor");
+            log.Error("some error", new Exception("this is explicit launched exception"));
+          
         }
     }
 }

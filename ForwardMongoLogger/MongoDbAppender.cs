@@ -12,7 +12,8 @@ namespace ForwardMongoLogger
     public class MongoDbAppender : AppenderSkeleton
     {
         private readonly List<MongoAppenderFileld> _fields = new List<MongoAppenderFileld>();
-
+        
+        #region Public Members
         /// <summary>
         /// MongoDB database connection in the format:
         /// mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
@@ -33,103 +34,70 @@ namespace ForwardMongoLogger
         /// </summary>
         public string CollectionName { get; set; }
 
-        #region Deprecated
+        /// <summary>
+        /// Specify if use cappedCollection
+        /// </summary>
+        public string CappedCollection { get; set; }
 
         /// <summary>
-        /// Hostname of MongoDB server
-        /// Defaults to localhost
+        /// Size of CappedCollection in Bytes
         /// </summary>
-        [Obsolete("Use ConnectionString")]
-        public string Host { get; set; }
-
-        /// <summary>
-        /// Port of MongoDB server
-        /// Defaults to 27017
-        /// </summary>
-        [Obsolete("Use ConnectionString")]
-        public int Port { get; set; }
-
-        /// <summary>
-        /// Name of the database on MongoDB
-        /// Defaults to log4net_mongodb
-        /// </summary>
-        [Obsolete("Use ConnectionString")]
-        public string DatabaseName { get; set; }
-
-        /// <summary>
-        /// MongoDB database user name
-        /// </summary>
-        [Obsolete("Use ConnectionString")]
-        public string UserName { get; set; }
-
-        /// <summary>
-        /// MongoDB database password
-        /// </summary>
-        [Obsolete("Use ConnectionString")]
-        public string Password { get; set; }
-
-        #endregion
+        public string CappedCollectionSize { get; set; }
 
         public void AddField(MongoAppenderFileld fileld)
         {
             _fields.Add(fileld);
         }
 
+        #endregion
+        
+        #region Protected Members
+        
         protected override void Append(LoggingEvent loggingEvent)
         {
-            var collection = GetCollection();
-            collection.InsertOneAsync(BuildBsonDocument(loggingEvent));
-        }
+            var mongoDbHelper = new MongoDbHelper();
 
+            // get connectionString from config file
+            var connectionString = mongoDbHelper.GetConnectionString(ConnectionStringName, ConnectionString);
+
+            // get database
+            var db = mongoDbHelper.GetDatabase(connectionString);
+
+
+            var collection = mongoDbHelper.GetCollection(
+                db, 
+                CappedCollection != null && Convert.ToBoolean(CappedCollection),
+                CollectionName,
+                CappedCollectionSize != null? long.Parse(CappedCollectionSize):0);
+ 
+
+             //build Bson document
+            var bsonDocument = mongoDbHelper.BuildBsonDocument(loggingEvent);
+            
+            // insert doc in db
+            mongoDbHelper.InsertDocumentInCollection(bsonDocument, collection);
+        }
         protected override void Append(LoggingEvent[] loggingEvents)
         {
-            var collection = GetCollection();
-            collection.InsertManyAsync(loggingEvents.Select(BuildBsonDocument));
+            var mongoDbHelper = new MongoDbHelper();
+
+            // get connectionString from config file
+            var connectionString = mongoDbHelper.GetConnectionString(ConnectionStringName, ConnectionString);
+            
+            // get database
+            var db = mongoDbHelper.GetDatabase(connectionString);
+
+            // get collection
+            var collection = mongoDbHelper.GetCollection(db, Convert.ToBoolean(CappedCollection), CollectionName, long.Parse(CappedCollectionSize));
+
+            //// build Bson documents
+            //var bsonDocuments = loggingEvents.Select(mongoDbHelper.BuildBsonDocument).ToList();
+            
+            //// insert docs in db
+            //mongoDbHelper.InsertDocumentsInCollection(bsonDocuments, collection);
         }
-
-        private IMongoCollection<BsonDocument> GetCollection()
-        {
-            var db = GetDatabase();
-            var collection = db.GetCollection<BsonDocument>(CollectionName ?? "logs");
-            return collection;
-        }
-
-        private string GetConnectionString()
-        {
-            ConnectionStringSettings connectionStringSetting = ConfigurationManager.ConnectionStrings[ConnectionStringName];
-            return connectionStringSetting != null ? connectionStringSetting.ConnectionString : ConnectionString;
-        }
-
-        private IMongoDatabase GetDatabase()
-        {
-            string connStr = GetConnectionString();
-
-            if (string.IsNullOrWhiteSpace(connStr))
-            {
-                return BackwardCompatibility.GetDatabase(this);
-            }
-
-            MongoUrl url = MongoUrl.Create(connStr);
-
-            var client = new MongoClient(url);
-            var db = client.GetDatabase(url.DatabaseName ?? "MongoLog");
-            return db;
-        }
-
-        private BsonDocument BuildBsonDocument(LoggingEvent log)
-        {
-            if (_fields.Count == 0)
-            {
-                return BackwardCompatibility.BuildBsonDocument(log);
-            }
-            var doc = new BsonDocument();
-            foreach (MongoAppenderFileld field in _fields)
-            {
-                object value = field.Layout.Format(log);
-                var bsonValue = value as BsonValue ?? BsonValue.Create(value);
-                doc.Add(field.Name, bsonValue);
-            }
-            return doc;
-        }
-    }
+        
+        #endregion
+      
+      }
 }
