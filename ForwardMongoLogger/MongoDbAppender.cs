@@ -64,11 +64,7 @@ namespace ForwardMongoLogger
             var db = mongoDbHelper.GetDatabase(connectionString);
 
 
-            var collection = mongoDbHelper.GetCollection(
-                db, 
-                CappedCollection != null && Convert.ToBoolean(CappedCollection),
-                CollectionName,
-                CappedCollectionSize != null? long.Parse(CappedCollectionSize):0);
+            var collection = mongoDbHelper.GetCollection(db, CappedCollection != null && Convert.ToBoolean(CappedCollection),CollectionName,CappedCollectionSize != null? long.Parse(CappedCollectionSize):0);
  
 
              //build Bson document

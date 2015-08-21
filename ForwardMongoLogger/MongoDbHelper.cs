@@ -23,7 +23,7 @@ namespace ForwardMongoLogger
         #endregion
 
         public IMongoCollection<BsonDocument> GetCollection(IMongoDatabase mongoDatabase, bool? cappedCollection,
-            string collectionName, long cappedCollectionSize)
+            string collectionName, long? cappedCollectionSize)
         {
             IMongoCollection<BsonDocument> retVal = null;
 
@@ -66,7 +66,7 @@ namespace ForwardMongoLogger
             return stats["capped"].AsBoolean;
         }
 
-        private static async Task<bool> ConvertCollectionToCapped(string collectionName, IMongoDatabase mongoDatabase,long cappedCollectionSize)
+        private static async Task<bool> ConvertCollectionToCapped(string collectionName, IMongoDatabase mongoDatabase,long? cappedCollectionSize)
         {
             var command = new BsonDocumentCommand<BsonDocument>(new BsonDocument
             {
@@ -79,7 +79,7 @@ namespace ForwardMongoLogger
 
         }
 
-        private static async Task CreateCollectionAsync(IMongoDatabase mongoDatabase, string collectionName, long cappedCollectionSize)
+        private static async Task CreateCollectionAsync(IMongoDatabase mongoDatabase, string collectionName, long? cappedCollectionSize)
         {
             var createCollectionOptions = new CreateCollectionOptions()
             {
