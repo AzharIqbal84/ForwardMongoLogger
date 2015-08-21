@@ -1,29 +1,29 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Threading.Tasks;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using log4net.Appender;
-using log4net.Core;
-
-
-
-namespace ForwardMongoLogger
+﻿namespace ForwardMongoLogger
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Configuration;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using MongoDB.Bson;
+    using MongoDB.Driver;
+    using log4net.Core;
     public class MongoDbHelper
     {
         #region Constants
 
-        private const string CollectionDefaulName = "logs";
-        private const string DataBaseDefaulName = "MongoLog";
+        public static readonly string CollectionDefaulName = "logs";
+        public static readonly string DataBaseDefaulName = "MongoLog";
+        public static readonly long DefaultCappedCollectionSize = 4096;
+        public static readonly long DefaultCappedCollectionMaxDocuments = 2000;
 
         #endregion
 
+        #region Public Members
+
         public IMongoCollection<BsonDocument> GetCollection(IMongoDatabase mongoDatabase, bool? cappedCollection,
-            string collectionName, long? cappedCollectionSize)
+            string collectionName, long? cappedCollectionSize, long? maxNumberOfDocuments)
         {
             IMongoCollection<BsonDocument> retVal = null;
 
@@ -35,7 +35,7 @@ namespace ForwardMongoLogger
             
             if (!IsCollectionExistsAsync(mongoDatabase, collectionName).Result)
             {
-                CreateCollectionAsync(mongoDatabase, collectionName, cappedCollectionSize).Wait();
+                CreateCollectionAsync(mongoDatabase, collectionName, cappedCollectionSize, maxNumberOfDocuments).Wait();
                 retVal = mongoDatabase.GetCollection<BsonDocument>(collectionName ?? CollectionDefaulName);
                 return retVal;
             }
@@ -45,51 +45,16 @@ namespace ForwardMongoLogger
                 retVal = mongoDatabase.GetCollection<BsonDocument>(collectionName ?? CollectionDefaulName);
                 return retVal;
             }
-        
 
-            if (ConvertCollectionToCapped(collectionName, mongoDatabase, cappedCollectionSize).Result)
+
+            if (ConvertCollectionToCapped(collectionName, mongoDatabase, cappedCollectionSize, maxNumberOfDocuments).Result)
             {
                 retVal = mongoDatabase.GetCollection<BsonDocument>(collectionName ?? CollectionDefaulName);
             }
             
             return retVal;
         }
-
-        private static async Task<bool> IsCappedCollection(string collectionName, IMongoDatabase mongoDatabase)
-        {
-            var command = new BsonDocumentCommand<BsonDocument>(new BsonDocument
-            {
-                {"collstats", collectionName}
-            });
-
-            var stats = await mongoDatabase.RunCommandAsync(command);
-            return stats["capped"].AsBoolean;
-        }
-
-        private static async Task<bool> ConvertCollectionToCapped(string collectionName, IMongoDatabase mongoDatabase,long? cappedCollectionSize)
-        {
-            var command = new BsonDocumentCommand<BsonDocument>(new BsonDocument
-            {
-                {"convertToCapped", collectionName},
-                {"size",cappedCollectionSize}
-            });
-
-            var stats = await mongoDatabase.RunCommandAsync(command);
-            return stats["ok"].AsDouble == 1.0;
-
-        }
-
-        private static async Task CreateCollectionAsync(IMongoDatabase mongoDatabase, string collectionName, long? cappedCollectionSize)
-        {
-            var createCollectionOptions = new CreateCollectionOptions()
-            {
-                Capped = true,
-                MaxSize = cappedCollectionSize
-            };
-            
-            await mongoDatabase.CreateCollectionAsync(collectionName ?? CollectionDefaulName, createCollectionOptions);
-        }
-
+        
         public async Task<bool> IsCollectionExistsAsync(IMongoDatabase mongoDatabase,string collectionName)
         {
             var filter = new BsonDocument("name", collectionName);
@@ -188,6 +153,10 @@ namespace ForwardMongoLogger
 
             return toReturn;
         }
+        
+        #endregion
+
+        #region Private Members
 
         private static BsonDocument BuildExceptionBsonDocument(Exception ex)
         {
@@ -204,5 +173,43 @@ namespace ForwardMongoLogger
 
             return toReturn;
         }
+
+        private static async Task<bool> IsCappedCollection(string collectionName, IMongoDatabase mongoDatabase)
+        {
+            var command = new BsonDocumentCommand<BsonDocument>(new BsonDocument
+            {
+                {"collstats", collectionName}
+            });
+
+            var stats = await mongoDatabase.RunCommandAsync(command);
+            return stats["capped"].AsBoolean;
+        }
+
+        private static async Task<bool> ConvertCollectionToCapped(string collectionName, IMongoDatabase mongoDatabase, long? cappedCollectionSize, long? maxNumberOfDocuments)
+        {
+            var command = new BsonDocumentCommand<BsonDocument>(new BsonDocument
+            {
+                {"convertToCapped", collectionName},
+                {"size",cappedCollectionSize ?? DefaultCappedCollectionSize },
+                {"max",maxNumberOfDocuments ?? DefaultCappedCollectionMaxDocuments}
+            });
+
+            await mongoDatabase.RunCommandAsync(command);
+            return await IsCappedCollection(collectionName, mongoDatabase);
+        }
+
+        private static async Task CreateCollectionAsync(IMongoDatabase mongoDatabase, string collectionName, long? cappedCollectionSize, long? maxNumberOfDocuments)
+        {
+            var createCollectionOptions = new CreateCollectionOptions()
+            {
+                Capped = true,
+                MaxSize = cappedCollectionSize ?? DefaultCappedCollectionSize,
+                MaxDocuments = maxNumberOfDocuments ?? DefaultCappedCollectionMaxDocuments
+            };
+
+            await mongoDatabase.CreateCollectionAsync(collectionName ?? CollectionDefaulName, createCollectionOptions);
+        }
+        
+        #endregion
     }
 }

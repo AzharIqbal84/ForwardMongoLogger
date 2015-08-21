@@ -44,6 +44,8 @@ namespace ForwardMongoLogger
         /// </summary>
         public string CappedCollectionSize { get; set; }
 
+        public string MaxNumberOfDocuments { get; set; }
+
         public void AddField(MongoAppenderFileld fileld)
         {
             _fields.Add(fileld);
@@ -63,11 +65,16 @@ namespace ForwardMongoLogger
             // get database
             var db = mongoDbHelper.GetDatabase(connectionString);
 
-
-            var collection = mongoDbHelper.GetCollection(db, CappedCollection != null && Convert.ToBoolean(CappedCollection),CollectionName,CappedCollectionSize != null? long.Parse(CappedCollectionSize):0);
+            
+            // get collection 
+            var collection = mongoDbHelper.GetCollection(
+                db,
+                CappedCollection != null && Convert.ToBoolean(CappedCollection),
+                CollectionName,
+                CappedCollectionSize != null ? long.Parse(CappedCollectionSize): MongoDbHelper.DefaultCappedCollectionSize, 
+                MaxNumberOfDocuments != null ? long.Parse(MaxNumberOfDocuments): MongoDbHelper.DefaultCappedCollectionMaxDocuments);
  
-
-             //build Bson document
+            //build Bson document
             var bsonDocument = mongoDbHelper.BuildBsonDocument(loggingEvent);
             
             // insert doc in db
@@ -83,9 +90,14 @@ namespace ForwardMongoLogger
             // get database
             var db = mongoDbHelper.GetDatabase(connectionString);
 
-            // get collection
-            var collection = mongoDbHelper.GetCollection(db, CappedCollection != null && Convert.ToBoolean(CappedCollection), CollectionName, CappedCollectionSize != null ? long.Parse(CappedCollectionSize) : 0);
- 
+            // get collection 
+            var collection = mongoDbHelper.GetCollection(
+                db,
+                CappedCollection != null && Convert.ToBoolean(CappedCollection),
+                CollectionName,
+                CappedCollectionSize != null ? long.Parse(CappedCollectionSize) : MongoDbHelper.DefaultCappedCollectionSize,
+                MaxNumberOfDocuments != null ? long.Parse(MaxNumberOfDocuments) : MongoDbHelper.DefaultCappedCollectionMaxDocuments);
+
             // build Bson documents
             var bsonDocuments = loggingEvents.Select(mongoDbHelper.BuildBsonDocument).ToList();
 
