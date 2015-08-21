@@ -84,13 +84,13 @@ namespace ForwardMongoLogger
             var db = mongoDbHelper.GetDatabase(connectionString);
 
             // get collection
-            var collection = mongoDbHelper.GetCollection(db, Convert.ToBoolean(CappedCollection), CollectionName, long.Parse(CappedCollectionSize));
+            var collection = mongoDbHelper.GetCollection(db, CappedCollection != null && Convert.ToBoolean(CappedCollection), CollectionName, CappedCollectionSize != null ? long.Parse(CappedCollectionSize) : 0);
+ 
+            // build Bson documents
+            var bsonDocuments = loggingEvents.Select(mongoDbHelper.BuildBsonDocument).ToList();
 
-            //// build Bson documents
-            //var bsonDocuments = loggingEvents.Select(mongoDbHelper.BuildBsonDocument).ToList();
-            
-            //// insert docs in db
-            //mongoDbHelper.InsertDocumentsInCollection(bsonDocuments, collection);
+            // insert docs in db
+            mongoDbHelper.InsertDocumentsInCollection(bsonDocuments, collection);
         }
         
         #endregion
