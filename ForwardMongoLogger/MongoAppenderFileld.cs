@@ -1,4 +1,4 @@
-﻿
+﻿    
 using log4net.Layout;
 
 namespace ForwardMongoLogger

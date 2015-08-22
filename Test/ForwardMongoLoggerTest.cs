@@ -1,4 +1,5 @@
-﻿using log4net.Config;
+﻿using System;
+using log4net.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Test
@@ -20,5 +21,13 @@ namespace Test
         {
             _log.Info("some infor");
         }
+
+        [TestMethod]
+        public void Log_Error_Test()
+        {
+            _log.Error("some infor", new Exception("some exception"));
+        }
+
+
     }
 }

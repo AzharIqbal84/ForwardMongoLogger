@@ -34,4 +34,3 @@ C:\Users\azhariqbal\Desktop\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\Mong
 C:\Users\azhariqbal\Desktop\ForwardMongoLogger\ForwardMongoLogger\bin\Debug\MongoDB.Driver.xml
 C:\Users\azhariqbal\Desktop\ForwardMongoLogger\ForwardMongoLogger\obj\Debug\ForwardMongoLogger.dll
 C:\Users\azhariqbal\Desktop\ForwardMongoLogger\ForwardMongoLogger\obj\Debug\ForwardMongoLogger.pdb
-C:\work\ForwardMongoLogger\ForwardMongoLogger\obj\Debug\ForwardMongoLogger.csprojResolveAssemblyReference.cache

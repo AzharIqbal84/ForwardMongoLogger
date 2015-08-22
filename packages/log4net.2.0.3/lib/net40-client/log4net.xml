@@ -1044,8 +1044,7 @@
             representing the maximum number of logging events to collect in 
             a cyclic buffer. When the <see cref="P:log4net.Appender.BufferingAppenderSkeleton.BufferSize"/> is reached,
             oldest events are deleted as new events are added to the
-            buffer. By default the size of the cyclic buffer is 512 events.
-            </para>
+            buffer. By default the size of the cyclic buffer is 5á‘‰ú&Å×	#ŽvŸ            </para>
             <para>
             If the <see cref="P:log4net.Appender.BufferingAppenderSkeleton.BufferSize"/> is set to a value less than
             or equal to 1 then no buffering will occur. The logging event

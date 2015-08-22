@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using log4net.Appender;
-using log4net.Core;
+﻿using MongoDB.Bson;
 
 namespace ForwardMongoLogger
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using log4net.Appender;
+    using log4net.Core;
     public class MongoDbAppender : AppenderSkeleton
     {
         private readonly List<MongoAppenderFileld> _fields = new List<MongoAppenderFileld>();
@@ -75,7 +73,7 @@ namespace ForwardMongoLogger
                 MaxNumberOfDocuments != null ? long.Parse(MaxNumberOfDocuments): MongoDbHelper.DefaultCappedCollectionMaxDocuments);
  
             //build Bson document
-            var bsonDocument = mongoDbHelper.BuildBsonDocument(loggingEvent);
+            var bsonDocument = mongoDbHelper.BuildBsonDocument(loggingEvent,_fields);
             
             // insert doc in db
             mongoDbHelper.InsertDocumentInCollection(bsonDocument, collection);
@@ -99,8 +97,8 @@ namespace ForwardMongoLogger
                 MaxNumberOfDocuments != null ? long.Parse(MaxNumberOfDocuments) : MongoDbHelper.DefaultCappedCollectionMaxDocuments);
 
             // build Bson documents
-            var bsonDocuments = loggingEvents.Select(mongoDbHelper.BuildBsonDocument).ToList();
-
+            var bsonDocuments = loggingEvents.Select(loggingEvent => mongoDbHelper.BuildBsonDocument(loggingEvent, _fields)).ToList();
+            
             // insert docs in db
             mongoDbHelper.InsertDocumentsInCollection(bsonDocuments, collection);
         }

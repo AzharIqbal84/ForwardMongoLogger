@@ -73,12 +73,13 @@
 
         public IMongoDatabase GetDatabase(string connectionString)
         {
-            var url = MongoUrl.Create(connectionString);
+       
+             var url = MongoUrl.Create(connectionString);
 
-            var client = new MongoClient(url);
+             var client = new MongoClient(url);
 
-            var db = client.GetDatabase(url.DatabaseName ?? DataBaseDefaulName);
-
+             var db = client.GetDatabase(url.DatabaseName ?? DataBaseDefaulName);
+     
             return db;
         }
 
@@ -104,75 +105,23 @@
         {
             await collection.InsertManyAsync(documents);
         }
-        
-        public BsonDocument BuildBsonDocument(LoggingEvent loggingEvent)
+
+        public BsonDocument BuildBsonDocument(LoggingEvent loggingEvent, List<MongoAppenderFileld> fields)
         {
-            if (loggingEvent == null)
+            var doc = new BsonDocument();
+            foreach (MongoAppenderFileld field in fields)
             {
-                return null;
+                object value = field.Layout.Format(loggingEvent);
+                var bsonValue = value as BsonValue ?? BsonValue.Create(value);
+                doc.Add(field.Name, bsonValue);
             }
+            return doc;
 
-            var toReturn = new BsonDocument {
-				{"timestamp", loggingEvent.TimeStamp}, 
-				{"level", loggingEvent.Level.ToString()}, 
-				{"thread", loggingEvent.ThreadName}, 
-				{"userName", loggingEvent.UserName}, 
-				{"message", loggingEvent.RenderedMessage}, 
-				{"loggerName", loggingEvent.LoggerName}, 
-				{"domain", loggingEvent.Domain}, 
-				{"machineName", Environment.MachineName}
-			};
-
-            // location information, if available
-            if (loggingEvent.LocationInformation != null)
-            {
-                toReturn.Add("fileName", loggingEvent.LocationInformation.FileName);
-                toReturn.Add("method", loggingEvent.LocationInformation.MethodName);
-                toReturn.Add("lineNumber", loggingEvent.LocationInformation.LineNumber);
-                toReturn.Add("className", loggingEvent.LocationInformation.ClassName);
-            }
-
-            // exception information
-            if (loggingEvent.ExceptionObject != null)
-            {
-                toReturn.Add("exception", BuildExceptionBsonDocument(loggingEvent.ExceptionObject));
-            }
-
-            // properties
-            var compositeProperties = loggingEvent.GetProperties();
-            if (compositeProperties != null && compositeProperties.Count > 0)
-            {
-                var properties = new BsonDocument();
-                foreach (DictionaryEntry entry in compositeProperties)
-                {
-                    properties.Add(entry.Key.ToString(), entry.Value.ToString());
-                }
-
-                toReturn.Add("properties", properties);
-            }
-
-            return toReturn;
         }
         
         #endregion
 
         #region Private Members
-
-        private static BsonDocument BuildExceptionBsonDocument(Exception ex)
-        {
-            var toReturn = new BsonDocument {
-				{"message", ex.Message}, 
-				{"source", ex.Source}, 
-				{"stackTrace", ex.StackTrace}
-			};
-
-            if (ex.InnerException != null)
-            {
-                toReturn.Add("innerException", BuildExceptionBsonDocument(ex.InnerException));
-            }
-
-            return toReturn;
-        }
 
         private static async Task<bool> IsCappedCollection(string collectionName, IMongoDatabase mongoDatabase)
         {
