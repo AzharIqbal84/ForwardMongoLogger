@@ -1,6 +1,4 @@
-﻿using MongoDB.Bson;
-
-namespace ForwardMongoLogger
+﻿namespace ForwardMongoLogger
 {
     using System;
     using System.Collections.Generic;

@@ -1,8 +1,6 @@
-﻿    
-using log4net.Layout;
-
-namespace ForwardMongoLogger
+﻿namespace ForwardMongoLogger
 {
+    using log4net.Layout;
     public class MongoAppenderFileld
     {
         public string Name { get; set; }
